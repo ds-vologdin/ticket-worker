@@ -14,7 +14,11 @@ func main() {
 		ticket := storage.Tickets[ticketID]
 		fmt.Println(ticket)
 		order := storage.OrdersSteps[ticket.Type]
-		fmt.Println("steps order:")
-		fmt.Println(order)
+		fmt.Printf("steps order: %v\n", order)
+		ticketSteps, err := storage.GetTicketStepsByTicketID(ticket.ID)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+		fmt.Printf("ticket steps: %v\n", ticketSteps)
 	}
 }

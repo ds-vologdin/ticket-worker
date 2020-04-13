@@ -13,10 +13,11 @@ const (
 	TicketType3 = 3
 
 	// Statuses of tickets
-	Pending   = 1
-	Processed = 2
-	Failed    = 3
-	Success   = 4
+	Created   = 1
+	Pending   = 2
+	Processed = 3
+	Failed    = 4
+	Success   = 5
 
 	// Types of steps
 	StepType1 = 1
@@ -53,8 +54,9 @@ type TicketStep struct {
 	SerialNumb int32
 	Nonce      uuid.UUID
 	Status     StepStatus
-	Start      time.Time
-	Stop       time.Time
+	Created    time.Time
+	Started    time.Time
+	Stoped     time.Time
 	Info       string
 }
 
