@@ -1,19 +1,25 @@
 package storage
 
-import "github.com/ds-vologdin/ticket-worker/ticket"
+import (
+	"github.com/ds-vologdin/ticket-worker/ticket"
+)
 
 type TicketStorage interface {
 	Init() error
 
-	GetOrderStepsByTicketType(ticketType ticket.TicketType) ([]ticket.Step, error)
-	// InitTicketSteps(ticket.TicketID) error
+	// manage tickets
 	AddTicketAndInitSteps(ticket.Ticket) error
-	// GetTickets() ([]ticket.Ticket, error)
-	// GetTicket(id ticket.TicketID) (ticket.Ticket, error)
-	GetTicketStepsByTicketID(ticketID ticket.TicketID) ([]ticket.TicketStep, error)
+	GetOrderStepsByTicketType(ticketType ticket.TicketType) ([]ticket.Step, error)
 
-	// AddTicketWithEmptySteps(tkt ticket.Ticket) error
-	// UpdateTicket(tkt ticket.Ticket) error
+	// for back-office
+	GetAllTickets() ([]ticket.Ticket, error)
+	GetActiveTickets() ([]ticket.Ticket, error)
+	GetTicket(id ticket.TicketID) (ticket.Ticket, []ticket.TicketStep, error)
+	// for test
+	GetOnePendingTicketForManualProcessing() (*ticket.Ticket, []ticket.TicketStep, error)
 
-	// AddTicketStep(step ticket.TicketStep) error
+	// for worker
+	GetOnePendingTicketForAutoProcessing() (*ticket.Ticket, []ticket.TicketStep, error)
+	MarkStepAsProcessed(ticketID ticket.TicketID, serial int32) error
+	SaveStepResult(ticketID ticket.TicketID, serial int32, status ticket.StepStatus, details string) error
 }

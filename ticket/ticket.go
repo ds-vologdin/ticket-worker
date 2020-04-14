@@ -13,11 +13,11 @@ const (
 	TicketType3 = 3
 
 	// Statuses of tickets
-	Created   = 1
-	Pending   = 2
-	Processed = 3
-	Failed    = 4
-	Success   = 5
+	Created   = "Created"
+	Pending   = "Pending"
+	Processed = "Processed"
+	Failed    = "Failed"
+	Success   = "Success"
 
 	// Types of steps
 	StepType1 = 1
@@ -27,10 +27,11 @@ const (
 )
 
 type TicketType int32
-type TicketStatus int32
+type TicketStatus string
 type StepType int32
-type StepStatus int32
+type StepStatus string
 type TicketID uuid.UUID
+type NonceType uuid.UUID
 
 type Ticket struct {
 	ID          TicketID
@@ -39,6 +40,7 @@ type Ticket struct {
 	Created     time.Time
 	Closed      time.Time
 	Status      TicketStatus
+	Details     string // json
 }
 
 type Step struct {
@@ -48,20 +50,26 @@ type Step struct {
 }
 
 // Создаются бэкендом при уведомлении со стороны воркера
+// key: (TicketID, SerialNumb)
 type TicketStep struct {
 	TicketID   TicketID
-	StepType   StepType
 	SerialNumb int32
-	Nonce      uuid.UUID
+	StepType   StepType
+	Nonce      NonceType
 	Status     StepStatus
 	Created    time.Time
 	Started    time.Time
 	Stoped     time.Time
-	Info       string
+	Details    string // json
 }
 
 type TicketStepOrder struct {
 	TicketType  TicketType
 	Order       []Step
 	Description string
+}
+
+func NewTicketID() (TicketID, error) {
+	id, err := uuid.NewRandom()
+	return TicketID(id), err
 }
