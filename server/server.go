@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/ds-vologdin/ticket-worker/mock"
 	"github.com/ds-vologdin/ticket-worker/storage"
 	"github.com/ds-vologdin/ticket-worker/storage/memory"
-	"github.com/ds-vologdin/ticket-worker/ticket"
 	tk "github.com/ds-vologdin/ticket-worker/ticket"
 )
 
@@ -31,7 +31,7 @@ func (s *serverTicket) AddTicketType1(details string) error {
 	}
 	ticket := tk.Ticket{
 		ID:      ticketID,
-		Type:    1,
+		Type:    mock.TicketType1,
 		Created: time.Now(),
 		Status:  tk.Pending,
 		Details: details,
@@ -48,7 +48,7 @@ func (s *serverTicket) AddTicketType2(details string) error {
 	}
 	ticket := tk.Ticket{
 		ID:      ticketID,
-		Type:    2,
+		Type:    mock.TicketType2,
 		Created: time.Now(),
 		Status:  tk.Pending,
 		Details: details,
@@ -65,19 +65,17 @@ func (s *serverTicket) GetActiveTickets() ([]tk.Ticket, error) {
 	return s.Storage.GetActiveTickets()
 }
 
-func (s *serverTicket) GetTicket(id tk.TicketID) (ticket.Ticket, []ticket.TicketStep, error) {
+func (s *serverTicket) GetTicket(id tk.TicketID) (tk.Ticket, []tk.TicketStep, error) {
 	return s.Storage.GetTicket(id)
 }
 
 // for emulate manual processing
 func (s *serverTicket) GetOnePendingTicketForManualProcessing() (*tk.Ticket, []tk.TicketStep, error) {
-	log.Println("GetOnePendingTicketForManualProcessing")
 	return s.Storage.GetOnePendingTicketForManualProcessing()
 }
 
 // for worker
 func (s *serverTicket) GetOnePendingTicket() (*tk.Ticket, []tk.TicketStep, error) {
-	log.Println("GetOnePendingTicket")
 	return s.Storage.GetOnePendingTicketForAutoProcessing()
 }
 

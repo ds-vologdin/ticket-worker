@@ -7,24 +7,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ds-vologdin/ticket-worker/mock"
 	"github.com/ds-vologdin/ticket-worker/ticket"
 	tk "github.com/ds-vologdin/ticket-worker/ticket"
 
 	"github.com/google/uuid"
 )
 
-const (
-	// Types of tickets
-	TicketType1 = 1
-	TicketType2 = 2
-	TicketType3 = 3
-
-	// Types of steps
-	StepType1 = 1
-	StepType2 = 2
-	StepType3 = 3
-	StepType4 = 4
-)
+const CountMockTicket = 100
 
 type TicketStorageMemory struct {
 	Tickets     map[tk.TicketID]tk.Ticket
@@ -196,7 +186,7 @@ func (s *TicketStorageMemory) MarkStepAsProcessed(ticketID tk.TicketID, serial i
 	if ticketStep.Status != tk.Pending {
 		return fmt.Errorf("Step status is %v", ticketStep.Status)
 	}
-	ticketStep.Status = tk.Pending
+	ticketStep.Status = tk.Processed
 	ticketStep.Started = time.Now()
 
 	ticketSteps[index] = *ticketStep
@@ -313,7 +303,7 @@ func NewMock() *TicketStorageMemory {
 	storage.initMockTicketType()
 	storage.initMockSteps()
 	storage.initMockOrdersSteps()
-	storage.initMockTickets(100)
+	storage.initMockTickets(CountMockTicket)
 	return storage
 }
 
@@ -321,28 +311,28 @@ func (s *TicketStorageMemory) initMockOrdersSteps() {
 	s.mx.Lock()
 	defer s.mx.Unlock()
 	var order = []tk.Step{s.Steps[0], s.Steps[1], s.Steps[2], s.Steps[3]}
-	s.OrdersSteps[TicketType1] = order
+	s.OrdersSteps[mock.TicketType1] = order
 	order = []tk.Step{s.Steps[0], s.Steps[1], s.Steps[3]}
-	s.OrdersSteps[TicketType2] = order
+	s.OrdersSteps[mock.TicketType2] = order
 	order = []tk.Step{s.Steps[0], s.Steps[3]}
-	s.OrdersSteps[TicketType3] = order
+	s.OrdersSteps[mock.TicketType3] = order
 }
 
 func (s *TicketStorageMemory) initMockSteps() {
 	s.mx.Lock()
 	defer s.mx.Unlock()
-	s.Steps = append(s.Steps, getNewStep(StepType1, true))
-	s.Steps = append(s.Steps, getNewStep(StepType2, true))
-	s.Steps = append(s.Steps, getNewStep(StepType3, false))
-	s.Steps = append(s.Steps, getNewStep(StepType4, true))
+	s.Steps = append(s.Steps, getNewStep(mock.StepType1, true))
+	s.Steps = append(s.Steps, getNewStep(mock.StepType2, true))
+	s.Steps = append(s.Steps, getNewStep(mock.StepType3, false))
+	s.Steps = append(s.Steps, getNewStep(mock.StepType4, true))
 }
 
 func (s *TicketStorageMemory) initMockTicketType() {
 	s.mx.Lock()
 	defer s.mx.Unlock()
-	s.TicketTypes = append(s.TicketTypes, TicketType1)
-	s.TicketTypes = append(s.TicketTypes, TicketType2)
-	s.TicketTypes = append(s.TicketTypes, TicketType3)
+	s.TicketTypes = append(s.TicketTypes, mock.TicketType1)
+	s.TicketTypes = append(s.TicketTypes, mock.TicketType2)
+	s.TicketTypes = append(s.TicketTypes, mock.TicketType3)
 }
 
 func (s *TicketStorageMemory) initMockTickets(count int) {

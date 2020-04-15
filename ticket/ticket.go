@@ -1,6 +1,7 @@
 package ticket
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -61,6 +62,11 @@ type TicketStep struct {
 	Started    time.Time
 	Stoped     time.Time
 	Details    string // json
+	// Auto       bool // denormalization ???
+}
+
+func (ts TicketStep) String() string {
+	return fmt.Sprintf("TicketStep: tk_id %v, serial %v, type %v", ts.TicketID, ts.SerialNumb, ts.StepType)
 }
 
 type TicketStepOrder struct {
